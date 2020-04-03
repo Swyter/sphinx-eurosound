@@ -66,7 +66,7 @@ for file_path in Path(sfx_folder).glob('HC*.SFX'):
         
         f.seek(sfxstart)
         
-        sfx = {}
+        sfx = []
         
         sfxcount = struct.unpack('<I', f.read(4))[0]
 
@@ -81,9 +81,11 @@ for file_path in Path(sfx_folder).glob('HC*.SFX'):
             if (hc_str in ht):
                 hc_str = ht[hc_str]
             else:
-                hc_str = "SFX_???"
+                hc_str = "SFX_%#x" % hc_str
             
             print('  ', hashcode, hc_str, offset)
+            
+            sfx.append(hc_str)
 
     with open(ht[hash] + '.yml', 'w') as outfile:
-        yaml.dump(data, outfile, default_flow_style=False)
+        yaml.dump(sfx, outfile, default_flow_style=False)
