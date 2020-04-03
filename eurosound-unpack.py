@@ -28,22 +28,28 @@ with open(sfx_hashcd, 'r') as outfile:
 
 def get_sample(sb_file, sample_ref, sampleinfostart, sampleinfolen, sampledatastart, sampledatalen):
     orig_offset = sb_file.tell()
+    print('   ', 'get_sample(', sb_file, sample_ref, sampleinfostart, sampleinfolen, sampledatastart, sampledatalen)
     
     sb_file.seek(sampleinfostart + 4 + (sample_ref * 0x28))
     
-    flags            = struct.unpack('<I', f.read(4))[0]
-    address          = struct.unpack('<I', f.read(4))[0]
-    size             = struct.unpack('<I', f.read(4))[0]
-    frequency        = struct.unpack('<I', f.read(4))[0]
-    realsize         = struct.unpack('<I', f.read(4))[0]
-    numberofchannels = struct.unpack('<I', f.read(4))[0]
-    bitsperchannel   = struct.unpack('<I', f.read(4))[0]
-    psi_sampleheader = struct.unpack('<I', f.read(4))[0]
-    loopoffset       = struct.unpack('<I', f.read(4))[0]
-    duration         = struct.unpack('<I', f.read(4))[0]
+    si = {}
+    si['flags']            = struct.unpack('<I', sb_file.read(4))[0]
+    si['address']          = struct.unpack('<I', sb_file.read(4))[0]
+    si['size']             = struct.unpack('<I', sb_file.read(4))[0]
+    si['frequency']        = struct.unpack('<I', sb_file.read(4))[0]
+    si['realsize']         = struct.unpack('<I', sb_file.read(4))[0]
+    si['numberofchannels'] = struct.unpack('<I', sb_file.read(4))[0]
+    si['bitsperchannel']   = struct.unpack('<I', sb_file.read(4))[0]
+    si['psi_sampleheader'] = struct.unpack('<I', sb_file.read(4))[0]
+    si['loopoffset']       = struct.unpack('<I', sb_file.read(4))[0]
+    si['duration']         = struct.unpack('<I', sb_file.read(4))[0]
     
-    sb_file.seek(orig_offset)
-    return []
+    sb_file.seek(sampledatastart + si['address'])
+    
+    si['data']             = sb_file.read(si['realsize'])
+
+    sb_file.seek(orig_offset); print(si)
+    return si
 
 global_sfx = []
 
