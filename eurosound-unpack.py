@@ -75,6 +75,8 @@ for file_path in Path(sfx_folder).glob('HC*.SFX'):
         for i in range(0, sfxcount):
             hashcode        = struct.unpack('<I', f.read(4))[0]
             offset          = struct.unpack('<I', f.read(4))[0]
+            
+            print('  ', hashcode, offset)
 
     with open(ht[hash] + '.yml', 'w') as outfile:
         yaml.dump(data, outfile, default_flow_style=False)
