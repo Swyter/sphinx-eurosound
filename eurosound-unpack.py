@@ -96,22 +96,38 @@ for file_path in Path(sfx_folder).glob('HC*.SFX'):
             
             f.seek(sfxstart + offset)
             
-            d = {}#collections.OrderedDict()
+            d = {}
             
             d['params'] = {}
             d['params']['duckerLength']      = struct.unpack('<H', f.read(2))[0]
-            d['params']['auckerLength']      = struct.unpack('<H', f.read(2))[0]
-            d['minDelay']          = struct.unpack('<H', f.read(2))[0]
-            d['maxDelay']          = struct.unpack('<H', f.read(2))[0]
-            d['innerRadiusReal']          = struct.unpack('<H', f.read(2))[0]
-            d['outerRadiusReal']          = struct.unpack('<H', f.read(2))[0]
-            d['reverbSend']          = struct.unpack('<H', f.read(2))[0]
-            d['trackingType']          = struct.unpack('<H', f.read(2))[0]
-            d['maxVoices']          = struct.unpack('<H', f.read(2))[0]
-            d['priority']          = struct.unpack('<H', f.read(2))[0]
-            d['ducker']          = struct.unpack('<H', f.read(2))[0]
-            d['flags']          = struct.unpack('<H', f.read(2))[0]
-            d['samples']          = struct.unpack('<H', f.read(2))[0]
+            d['params']['minDelay']          = struct.unpack('<H', f.read(2))[0]
+            d['params']['maxDelay']          = struct.unpack('<H', f.read(2))[0]
+            d['params']['innerRadiusReal']          = struct.unpack('<H', f.read(2))[0]
+            d['params']['outerRadiusReal']          = struct.unpack('<H', f.read(2))[0]
+            d['params']['reverbSend']          = struct.unpack('<H', f.read(2))[0]
+            d['params']['trackingType']          = struct.unpack('<H', f.read(2))[0]
+            d['params']['maxVoices']          = struct.unpack('<H', f.read(2))[0]
+            d['params']['priority']          = struct.unpack('<H', f.read(2))[0]
+            d['params']['ducker']          = struct.unpack('<H', f.read(2))[0]
+            d['params']['flags'] = {}
+            
+            flags = struct.unpack('<H', f.read(2))[0]
+            
+            d['params']['flags']['maxReject']          = (flags >>  0) & 1
+            d['params']['flags']['nextFreeOneToUse']   = (flags >>  1) & 1
+            d['params']['flags']['ignoreAge']          = (flags >>  2) & 1
+            d['params']['flags']['multiSample']        = (flags >>  3) & 1
+            d['params']['flags']['randomPick']         = (flags >>  4) & 1
+            d['params']['flags']['shuffled']           = (flags >>  5) & 1
+            d['params']['flags']['loop']               = (flags >>  6) & 1
+            d['params']['flags']['polyphonic']         = (flags >>  7) & 1
+            d['params']['flags']['underWater']         = (flags >>  8) & 1
+            d['params']['flags']['pauseInNis']         = (flags >>  9) & 1
+            d['params']['flags']['hasSubSfx']          = (flags >> 10) & 1
+            d['params']['flags']['stealOnLouder']      = (flags >> 11) & 1
+            d['params']['flags']['treatLikeMusic']     = (flags >> 12) & 1
+            
+            d['samples'] = {}
             
             
             if not os.path.exists(hc_str):
@@ -124,4 +140,4 @@ for file_path in Path(sfx_folder).glob('HC*.SFX'):
 
     with open(ht[hash] + '.yml', 'w') as outfile:
         outfile.write('# swy: EngineX sound bank exported from %s / %#x\n' % (ht[hash], 0x1c000000 | hash))
-        yaml.dump(sfx, outfile, default_flow_style=False)
+        yaml.dump(sfx, outfile, default_flow_style=False, sort_keys=False)
