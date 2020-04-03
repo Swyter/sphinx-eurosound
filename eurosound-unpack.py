@@ -90,7 +90,10 @@ for file_path in Path(sfx_folder).glob('HC*.SFX'):
             
             if not os.path.exists(hc_str):
                 os.mkdir(hc_str)
-            
+                
+            with open(hc_str + '/effectProperties.yml', 'w') as outfile:
+                outfile.write('# swy: EngineX sound effect exported from %s / %#x\n' % (hc_str, 0x1A000000 | hashcode))
+                yaml.dump([ 'stuff' ], outfile, default_flow_style=False)
 
     with open(ht[hash] + '.yml', 'w') as outfile:
         outfile.write('# swy: EngineX sound bank exported from %s / %#x\n' % (ht[hash], 0x1c000000 | hash))
