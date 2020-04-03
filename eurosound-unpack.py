@@ -42,6 +42,10 @@ global_sfx = []
 for file_path in Path(sfx_folder).glob('HC*.SFX'):
     hash = str(file_path).split('HC')[1].split('.')[0]
     hash = int(hash, 16)
+    
+    if (not str(file_path).endswith('HC00000A.SFX')):
+        continue
+    
     print(file_path, hash, ht[hash])
     with open(file_path, 'rb') as f:
         magic = struct.unpack('4s', f.read(4))[0]
@@ -143,10 +147,10 @@ for file_path in Path(sfx_folder).glob('HC*.SFX'):
             d['params']['flags']['treatLikeMusic']     = bool((flags >> 12) & 1)
             
             
-            sample_count    = struct.unpack('<b', f.read(1))[0]
-            d['samples'] = []
+            sample_count    = struct.unpack('<h', f.read(2))[0]
+            d['samples'] = {}
             
-            for s in range(0, sample_count):
+            for j in range(0, sample_count):
             
                 s = {}
                 s['fileRef']             = struct.unpack('<h', f.read(2))[0]
@@ -156,10 +160,10 @@ for file_path in Path(sfx_folder).glob('HC*.SFX'):
                 s['randomVolumeOffset']  = struct.unpack('<b', f.read(1))[0]
                 s['pan']                 = struct.unpack('<b', f.read(1))[0]
                 s['randomPan']           = struct.unpack('<b', f.read(1))[0]
+                
+                f.read(2) # s16 PadEm, don't ask me about alignment
 
-                d['samples'].append(s)
-            
-            
+                d['samples'][j] = s
             
             if not os.path.exists(hc_str):
                 os.mkdir(hc_str)
