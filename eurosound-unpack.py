@@ -48,7 +48,7 @@ for file_path in Path(sfx_folder).glob('HC*.SFX'):
         
         assert(magic == b'MUSX'), "unexpected header magic value, not MUSX."
         
-        print(str(magic), hashc, offst, fulls)#, "%X" % magic)
+        print(' ', str(magic), hashc, offst, fulls)#, "%X" % magic)
         
         sfxstart               = struct.unpack('<I', f.read(4))[0]
         sfxlen                 = struct.unpack('<I', f.read(4))[0]
@@ -62,14 +62,19 @@ for file_path in Path(sfx_folder).glob('HC*.SFX'):
         sampledatastart        = struct.unpack('<I', f.read(4))[0]
         sampledatalen          = struct.unpack('<I', f.read(4))[0]
         
-        print(sfxstart, sfxlen, sampleinfostart, sampleinfolen, specialsampleinfostart, specialsampleinfolen, sampledatastart, sampledatalen)
-        
+        print(' ', sfxstart, sfxlen, sampleinfostart, sampleinfolen, specialsampleinfostart, specialsampleinfolen, sampledatastart, sampledatalen)
         
         f.seek(sfxstart)
         
-        sfxcount = struct.unpack('<I', f.read(4))[0]
+        sfx = {}
         
-        print(sfxcount)
+        sfxcount = struct.unpack('<I', f.read(4))[0]
+
+        print(' ', sfxcount, 'sound effects here')
+        
+        for i in range(0, sfxcount):
+            hashcode        = struct.unpack('<I', f.read(4))[0]
+            offset          = struct.unpack('<I', f.read(4))[0]
 
     with open(ht[hash] + '.yml', 'w') as outfile:
         yaml.dump(data, outfile, default_flow_style=False)
