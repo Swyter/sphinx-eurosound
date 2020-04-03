@@ -36,6 +36,7 @@ data = dict(
     )
 )
 
+global_sfx = []
 
 # swy: iterate over all the soundbank files, make them human readable and unpack them
 for file_path in Path(sfx_folder).glob('HC*.SFX'):
@@ -94,16 +95,22 @@ for file_path in Path(sfx_folder).glob('HC*.SFX'):
             
             sfx.append(hc_str)
             
+            # swy: skip sound effects that we have already dumped in this session, even if they are from other soundbanks;
+            #      ideally they should all be the same, so we save time
+            if (hc_str in global_sfx):
+                continue
+                
+            global_sfx.append(hc_str)
+            
             f.seek(sfxstart + offset)
             
             tracking_type = [
-                'SFX_TrackingType_2d',
-		        'SFX_TrackingType_Amb',
-		        'SFX_TrackingType_3d',
-		        'SFX_TrackingType_3d_Rnd_Pos',
-		        'SFX_TrackingType_2d_PL2',
+                '2D',
+		        'Amb',
+		        '3D',
+		        '3D_Rnd_Pos',
+		        '2D_PL2',
             ]
-            
             
             d = {}
             
