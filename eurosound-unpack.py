@@ -162,9 +162,28 @@ for file_path in Path(sfx_folder).glob('HC*.SFX'):
                 
                 # dump_sample()
                 
-                if s['fileRef'] >= 0:
-                    with open(hc_str + '/' + chr(ord('a') + j) + '.wav', 'wb') as wavfile:
-                        wavfile.write(b'DUMMY')
+                # swy: ignore streamed (negative indexed) sounds for now
+                if s['fileRef'] < 0:
+                    continue
+                    
+                with open(hc_str + '/' + chr(ord('a') + j) + '.wav', 'wb') as wavfile:
+                    wavfile.write(b'RIFF')               # chunk_id
+                    wavfile.write(struct.pack('<I', 50)) # chunk_size
+                    wavfile.write(b'WAVE')               # format
+                    
+                    wavfile.write(b'fmt ')               # subchunk_id
+                    wavfile.write(struct.pack('<I', 16)) # subchunk_size: 16; size of the rest
+                    wavfile.write(struct.pack('<I',  1)) # audio_format: WAV_FORMAT_PCM
+                    wavfile.write(struct.pack('<I',  1)) # num_channels
+                    wavfile.write(struct.pack('<I',  1)) # sample_rate
+                    wavfile.write(struct.pack('<I',  1)) # byte_rate
+                    wavfile.write(struct.pack('<I',  1)) # block_align
+                    wavfile.write(struct.pack('<I',  1)) # bits_per_sample
+                    
+                    wavfile.write(b'data')               # subchunk_id
+                    wavfile.write(struct.pack('<I', 5))  # subchunk_size
+                    
+                    wavfile.write(b'DATA')
                 
             with open(hc_str + '/effectProperties.yml', 'w') as outfile:
                 outfile.write('# swy: EngineX sound effect exported from %s / %#x\n' % (hc_str, 0x1A000000 | hashcode))
