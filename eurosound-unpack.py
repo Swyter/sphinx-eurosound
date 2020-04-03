@@ -41,9 +41,12 @@ for file_path in Path(sfx_folder).glob('HC*.SFX'):
     hash = int(hash, 16)
     print(file_path, hash, ht[hash])
     with open(file_path, 'rb') as f:
-        magic = struct.unpack('<b', f.read(1))[0]
+        magic = struct.unpack('4s', f.read(4))
         
-        print(chr(magic), "%X" % magic)
+        assert(magic != b'MUSX'), "unexpected header magic value, not MUSX."
+            
+        
+        print(str(magic))#, "%X" % magic)
 
     with open(ht[hash] + '.yml', 'w') as outfile:
         yaml.dump(data, outfile, default_flow_style=False)
