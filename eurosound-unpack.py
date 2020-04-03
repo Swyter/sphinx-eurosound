@@ -96,6 +96,15 @@ for file_path in Path(sfx_folder).glob('HC*.SFX'):
             
             f.seek(sfxstart + offset)
             
+            tracking_type = [
+                'SFX_TrackingType_2d',
+		        'SFX_TrackingType_Amb',
+		        'SFX_TrackingType_3d',
+		        'SFX_TrackingType_3d_Rnd_Pos',
+		        'SFX_TrackingType_2d_PL2',
+            ]
+            
+            
             d = {}
             
             d['params'] = {}
@@ -105,7 +114,7 @@ for file_path in Path(sfx_folder).glob('HC*.SFX'):
             d['params']['innerRadiusReal'] = struct.unpack('<h', f.read(2))[0]
             d['params']['outerRadiusReal'] = struct.unpack('<h', f.read(2))[0]
             d['params']['reverbSend']      = struct.unpack('<b', f.read(1))[0]
-            d['params']['trackingType']    = struct.unpack('<b', f.read(1))[0]
+            d['params']['trackingType']    = tracking_type[ struct.unpack('<b', f.read(1))[0] ]
             d['params']['maxVoices']       = struct.unpack('<b', f.read(1))[0]
             d['params']['priority']        = struct.unpack('<b', f.read(1))[0]
             d['params']['ducker']          = struct.unpack('<b', f.read(1))[0]
@@ -114,19 +123,19 @@ for file_path in Path(sfx_folder).glob('HC*.SFX'):
             
             flags = struct.unpack('<H', f.read(2))[0]
             
-            d['params']['flags']['maxReject']          = (flags >>  0) & 1
-            d['params']['flags']['nextFreeOneToUse']   = (flags >>  1) & 1
-            d['params']['flags']['ignoreAge']          = (flags >>  2) & 1
-            d['params']['flags']['multiSample']        = (flags >>  3) & 1
-            d['params']['flags']['randomPick']         = (flags >>  4) & 1
-            d['params']['flags']['shuffled']           = (flags >>  5) & 1
-            d['params']['flags']['loop']               = (flags >>  6) & 1
-            d['params']['flags']['polyphonic']         = (flags >>  7) & 1
-            d['params']['flags']['underWater']         = (flags >>  8) & 1
-            d['params']['flags']['pauseInNis']         = (flags >>  9) & 1
-            d['params']['flags']['hasSubSfx']          = (flags >> 10) & 1
-            d['params']['flags']['stealOnLouder']      = (flags >> 11) & 1
-            d['params']['flags']['treatLikeMusic']     = (flags >> 12) & 1
+            d['params']['flags']['maxReject']          = bool((flags >>  0) & 1)
+            d['params']['flags']['nextFreeOneToUse']   = bool((flags >>  1) & 1)
+            d['params']['flags']['ignoreAge']          = bool((flags >>  2) & 1)
+            d['params']['flags']['multiSample']        = bool((flags >>  3) & 1)
+            d['params']['flags']['randomPick']         = bool((flags >>  4) & 1)
+            d['params']['flags']['shuffled']           = bool((flags >>  5) & 1)
+            d['params']['flags']['loop']               = bool((flags >>  6) & 1)
+            d['params']['flags']['polyphonic']         = bool((flags >>  7) & 1)
+            d['params']['flags']['underWater']         = bool((flags >>  8) & 1)
+            d['params']['flags']['pauseInNis']         = bool((flags >>  9) & 1)
+            d['params']['flags']['hasSubSfx']          = bool((flags >> 10) & 1)
+            d['params']['flags']['stealOnLouder']      = bool((flags >> 11) & 1)
+            d['params']['flags']['treatLikeMusic']     = bool((flags >> 12) & 1)
             
             
             d['params']['sampleCount']    = struct.unpack('<b', f.read(1))[0]
