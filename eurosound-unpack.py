@@ -24,13 +24,6 @@ with open(sfx_hashcd, 'r') as outfile:
 
 # print(ht)
 
-# swy: iterate over all the soundbank files, make them human readable and unpack them
-for file_path in Path(sfx_folder).glob('HC*.SFX'):
-    hash = str(file_path).split('HC')[1].split('.')[0]
-    hash = int(hash, 16)
-    print(file_path, hash, ht[hash])
-    # with open(sfx_hashcd, 'rb') as outfile:
-    
 
 data = dict(
     A = 'a',
@@ -41,5 +34,13 @@ data = dict(
     )
 )
 
-with open('data.yml', 'w') as outfile:
-    yaml.dump(data, outfile, default_flow_style=False)
+
+# swy: iterate over all the soundbank files, make them human readable and unpack them
+for file_path in Path(sfx_folder).glob('HC*.SFX'):
+    hash = str(file_path).split('HC')[1].split('.')[0]
+    hash = int(hash, 16)
+    print(file_path, hash, ht[hash])
+    # with open(sfx_hashcd, 'rb') as outfile:
+
+    with open(ht[hash] + '.yml', 'w') as outfile:
+        yaml.dump(data, outfile, default_flow_style=False)
