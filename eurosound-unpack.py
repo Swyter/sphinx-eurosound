@@ -26,15 +26,7 @@ with open(sfx_hashcd, 'r') as outfile:
 
 # print(ht)
 
-
-data = dict(
-    A = 'a',
-    B = dict(
-        C = 'c',
-        D = 'd',
-        E = 'e',
-    )
-)
+# dump_sample(file, dump_file):
 
 global_sfx = []
 
@@ -147,6 +139,9 @@ for file_path in Path(sfx_folder).glob('HC*.SFX'):
             d['params']['flags']['treatLikeMusic']     = bool((flags >> 12) & 1)
             
             
+            if not os.path.exists(hc_str):
+                os.mkdir(hc_str)
+            
             sample_count    = struct.unpack('<h', f.read(2))[0]
             d['samples'] = {}
             
@@ -162,15 +157,20 @@ for file_path in Path(sfx_folder).glob('HC*.SFX'):
                 s['randomPan']           = struct.unpack('<b', f.read(1))[0]
                 
                 f.read(2) # s16 PadEm, don't ask me about alignment
-
+                
                 d['samples'][j] = s
-            
-            if not os.path.exists(hc_str):
-                os.mkdir(hc_str)
+                
+                # dump_sample()
+                
+                if s['fileRef'] >= 0:
+                    with open(hc_str + '/' + chr(ord('a') + j) + '.wav', 'wb') as wavfile:
+                        wavfile.write(b'DUMMY')
                 
             with open(hc_str + '/effectProperties.yml', 'w') as outfile:
                 outfile.write('# swy: EngineX sound effect exported from %s / %#x\n' % (hc_str, 0x1A000000 | hashcode))
                 yaml.dump(d, outfile, default_flow_style=False, sort_keys=False)
+                
+                
                 
 
     with open(ht[hash] + '.yml', 'w') as outfile:
