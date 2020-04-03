@@ -77,9 +77,7 @@ for file_path in Path(sfx_folder).glob('HC*.SFX'):
         
         for i in range(0, sfxcount):
         
-            f.seek(sfxstart + 4 + (i * 0x8))
-            
-            print("%x" % f.tell())
+            f.seek(sfxstart + 4 + (i * 0x8)) # swy: the 4 is for the sfxcount size
             
             hashcode        = struct.unpack('<I', f.read(4))[0]
             offset          = struct.unpack('<I', f.read(4))[0]
@@ -145,8 +143,22 @@ for file_path in Path(sfx_folder).glob('HC*.SFX'):
             d['params']['flags']['treatLikeMusic']     = bool((flags >> 12) & 1)
             
             
-            d['params']['sampleCount']    = struct.unpack('<b', f.read(1))[0]
-            d['samples'] = {}
+            sample_count    = struct.unpack('<b', f.read(1))[0]
+            d['samples'] = []
+            
+            for s in range(0, sample_count):
+            
+                s = {}
+                s['fileRef']             = struct.unpack('<h', f.read(2))[0]
+                s['pitchOffset']         = struct.unpack('<h', f.read(2))[0]
+                s['randomPitchOffset']   = struct.unpack('<h', f.read(2))[0]
+                s['baseVolume']          = struct.unpack('<b', f.read(1))[0]
+                s['randomVolumeOffset']  = struct.unpack('<b', f.read(1))[0]
+                s['pan']                 = struct.unpack('<b', f.read(1))[0]
+                s['randomPan']           = struct.unpack('<b', f.read(1))[0]
+
+                d['samples'].append(s)
+            
             
             
             if not os.path.exists(hc_str):
