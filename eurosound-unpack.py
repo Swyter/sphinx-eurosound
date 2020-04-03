@@ -11,6 +11,7 @@ print(sfx_hashcd, sfx_folder)
 
 ht = {}
 
+# swy: parse the hashcode defines from the correct SFX header file
 with open(sfx_hashcd, 'r') as outfile:
     for line in outfile:
         line = line.split()
@@ -23,10 +24,11 @@ with open(sfx_hashcd, 'r') as outfile:
 
 # print(ht)
 
-
+# swy: iterate over all the soundbank files, make them human readable and unpack them
 for file_path in Path(sfx_folder).glob('HC*.SFX'):
     hash = str(file_path).split('HC')[1].split('.')[0]
-    print(file_path, hash, int(hash, 16), ht[int(hash, 16)])
+    hash = int(hash, 16)
+    print(file_path, hash, ht[hash])
     # with open(sfx_hashcd, 'rb') as outfile:
     
 
