@@ -41,26 +41,26 @@ for file_path in Path(sfx_folder).glob('HC*.SFX'):
     hash = int(hash, 16)
     print(file_path, hash, ht[hash])
     with open(file_path, 'rb') as f:
-        magic = struct.unpack('4s', f.read(4))
-        hashc = struct.unpack('<I', f.read(4))
-        offst = struct.unpack('<I', f.read(4))
-        fulls = struct.unpack('<I', f.read(4))
+        magic = struct.unpack('4s', f.read(4))[0]
+        hashc = struct.unpack('<I', f.read(4))[0]
+        offst = struct.unpack('<I', f.read(4))[0]
+        fulls = struct.unpack('<I', f.read(4))[0]
         
-        assert(magic != b'MUSX'), "unexpected header magic value, not MUSX."
+        assert(magic == b'MUSX'), "unexpected header magic value, not MUSX."
         
         print(str(magic), hashc, offst, fulls)#, "%X" % magic)
         
-        sfxstart               = struct.unpack('<I', f.read(4))
-        sfxlen                 = struct.unpack('<I', f.read(4))
+        sfxstart               = struct.unpack('<I', f.read(4))[0]
+        sfxlen                 = struct.unpack('<I', f.read(4))[0]
         
-        sampleinfostart        = struct.unpack('<I', f.read(4))
-        sampleinfolen          = struct.unpack('<I', f.read(4))
+        sampleinfostart        = struct.unpack('<I', f.read(4))[0]
+        sampleinfolen          = struct.unpack('<I', f.read(4))[0]
         
-        specialsampleinfostart = struct.unpack('<I', f.read(4))
-        specialsampleinfolen   = struct.unpack('<I', f.read(4))
+        specialsampleinfostart = struct.unpack('<I', f.read(4))[0]
+        specialsampleinfolen   = struct.unpack('<I', f.read(4))[0]
         
-        sampledatastart        = struct.unpack('<I', f.read(4))
-        sampledatalen          = struct.unpack('<I', f.read(4))
+        sampledatastart        = struct.unpack('<I', f.read(4))[0]
+        sampledatalen          = struct.unpack('<I', f.read(4))[0]
         
         
         print(sfxstart, sfxlen, sampleinfostart, sampleinfolen, specialsampleinfostart, specialsampleinfolen, sampledatastart, sampledatalen)#, "%X" % magic)
