@@ -9,12 +9,6 @@ sfx_folder = "Sphinx/Binary/_bin_PC/_Eng"
 
 print(sfx_hashcd, sfx_folder)
 
-for file_path in Path(sfx_folder).glob('HC*.SFX'):
-    print(file_path, str(file_path).split('HC')[1].split('.'))
-    # with open(sfx_hashcd, 'rb') as outfile:
-    
-    
-
 ht = {}
 
 with open(sfx_hashcd, 'r') as outfile:
@@ -28,6 +22,13 @@ with open(sfx_hashcd, 'r') as outfile:
             ht[int(line[2], 16)] = (line[1])
 
 # print(ht)
+
+
+for file_path in Path(sfx_folder).glob('HC*.SFX'):
+    hash = str(file_path).split('HC')[1].split('.')[0]
+    print(file_path, hash, int(hash, 16), ht[int(hash, 16)])
+    # with open(sfx_hashcd, 'rb') as outfile:
+    
 
 data = dict(
     A = 'a',
