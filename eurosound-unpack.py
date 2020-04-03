@@ -1,6 +1,7 @@
 import yaml
 import io
 import struct
+import os
 
 from pathlib import Path
 
@@ -87,7 +88,8 @@ for file_path in Path(sfx_folder).glob('HC*.SFX'):
             
             sfx.append(hc_str)
             
-            
+            if not os.path.exists(hc_str):
+                os.mkdir(hc_str)
             
 
     with open(ht[hash] + '.yml', 'w') as outfile:
