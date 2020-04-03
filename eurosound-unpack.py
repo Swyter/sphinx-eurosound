@@ -99,16 +99,17 @@ for file_path in Path(sfx_folder).glob('HC*.SFX'):
             d = {}
             
             d['params'] = {}
-            d['params']['duckerLength']      = struct.unpack('<H', f.read(2))[0]
-            d['params']['minDelay']          = struct.unpack('<H', f.read(2))[0]
-            d['params']['maxDelay']          = struct.unpack('<H', f.read(2))[0]
-            d['params']['innerRadiusReal']          = struct.unpack('<H', f.read(2))[0]
-            d['params']['outerRadiusReal']          = struct.unpack('<H', f.read(2))[0]
-            d['params']['reverbSend']          = struct.unpack('<H', f.read(2))[0]
-            d['params']['trackingType']          = struct.unpack('<H', f.read(2))[0]
-            d['params']['maxVoices']          = struct.unpack('<H', f.read(2))[0]
-            d['params']['priority']          = struct.unpack('<H', f.read(2))[0]
-            d['params']['ducker']          = struct.unpack('<H', f.read(2))[0]
+            d['params']['duckerLength']    = struct.unpack('<h', f.read(2))[0]
+            d['params']['minDelay']        = struct.unpack('<h', f.read(2))[0]
+            d['params']['maxDelay']        = struct.unpack('<h', f.read(2))[0]
+            d['params']['innerRadiusReal'] = struct.unpack('<h', f.read(2))[0]
+            d['params']['outerRadiusReal'] = struct.unpack('<h', f.read(2))[0]
+            d['params']['reverbSend']      = struct.unpack('<b', f.read(1))[0]
+            d['params']['trackingType']    = struct.unpack('<b', f.read(1))[0]
+            d['params']['maxVoices']       = struct.unpack('<b', f.read(1))[0]
+            d['params']['priority']        = struct.unpack('<b', f.read(1))[0]
+            d['params']['ducker']          = struct.unpack('<b', f.read(1))[0]
+            d['params']['masterVolume']    = struct.unpack('<b', f.read(1))[0]
             d['params']['flags'] = {}
             
             flags = struct.unpack('<H', f.read(2))[0]
@@ -127,6 +128,8 @@ for file_path in Path(sfx_folder).glob('HC*.SFX'):
             d['params']['flags']['stealOnLouder']      = (flags >> 11) & 1
             d['params']['flags']['treatLikeMusic']     = (flags >> 12) & 1
             
+            
+            d['params']['sampleCount']    = struct.unpack('<b', f.read(1))[0]
             d['samples'] = {}
             
             
