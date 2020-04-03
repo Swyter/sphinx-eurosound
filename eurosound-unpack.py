@@ -26,7 +26,24 @@ with open(sfx_hashcd, 'r') as outfile:
 
 # print(ht)
 
-# dump_sample(file, dump_file):
+def get_sample(sb_file, sample_ref, sampleinfostart, sampleinfolen, sampledatastart, sampledatalen):
+    orig_offset = sb_file.tell()
+    
+    sb_file.seek(sampleinfostart + 4 + (sample_ref * 0x28))
+    
+    flags            = struct.unpack('<I', f.read(4))[0]
+    address          = struct.unpack('<I', f.read(4))[0]
+    size             = struct.unpack('<I', f.read(4))[0]
+    frequency        = struct.unpack('<I', f.read(4))[0]
+    realsize         = struct.unpack('<I', f.read(4))[0]
+    numberofchannels = struct.unpack('<I', f.read(4))[0]
+    bitsperchannel   = struct.unpack('<I', f.read(4))[0]
+    psi_sampleheader = struct.unpack('<I', f.read(4))[0]
+    loopoffset       = struct.unpack('<I', f.read(4))[0]
+    duration         = struct.unpack('<I', f.read(4))[0]
+    
+    sb_file.seek(orig_offset)
+    return []
 
 global_sfx = []
 
@@ -160,7 +177,7 @@ for file_path in Path(sfx_folder).glob('HC*.SFX'):
                 
                 d['samples'][j] = s
                 
-                # dump_sample()
+                sample = get_sample(f, s['fileRef'], sampleinfostart, sampleinfolen, sampledatastart, sampledatalen)
                 
                 # swy: ignore streamed (negative indexed) sounds for now
                 if s['fileRef'] < 0:
