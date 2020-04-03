@@ -62,8 +62,14 @@ for file_path in Path(sfx_folder).glob('HC*.SFX'):
         sampledatastart        = struct.unpack('<I', f.read(4))[0]
         sampledatalen          = struct.unpack('<I', f.read(4))[0]
         
+        print(sfxstart, sfxlen, sampleinfostart, sampleinfolen, specialsampleinfostart, specialsampleinfolen, sampledatastart, sampledatalen)
         
-        print(sfxstart, sfxlen, sampleinfostart, sampleinfolen, specialsampleinfostart, specialsampleinfolen, sampledatastart, sampledatalen)#, "%X" % magic)
+        
+        f.seek(sfxstart)
+        
+        sfxcount = struct.unpack('<I', f.read(4))[0]
+        
+        print(sfxcount)
 
     with open(ht[hash] + '.yml', 'w') as outfile:
         yaml.dump(data, outfile, default_flow_style=False)
