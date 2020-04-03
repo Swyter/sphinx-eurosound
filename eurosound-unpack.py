@@ -2,11 +2,18 @@ import yaml
 import io
 import struct
 
+from pathlib import Path
+
 sfx_hashcd = "Sphinx/Sonix/SFX_Defines.h"
 sfx_folder = "Sphinx/Binary/_bin_PC/_Eng"
 
-
 print(sfx_hashcd, sfx_folder)
+
+for file_path in Path(sfx_folder).glob('HC*.SFX'):
+    print(file_path, str(file_path).split('HC')[1].split('.'))
+    # with open(sfx_hashcd, 'rb') as outfile:
+    
+    
 
 ht = {}
 
@@ -17,10 +24,10 @@ with open(sfx_hashcd, 'r') as outfile:
             continue
         
         if (line[0] == '#define'):
-            print(line)
+            # print(line)
             ht[int(line[2], 16)] = (line[1])
 
-print(ht)
+# print(ht)
 
 data = dict(
     A = 'a',
