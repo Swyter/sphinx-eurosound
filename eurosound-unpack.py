@@ -46,11 +46,16 @@ def get_sample(sb_file, sample_ref, sampleinfostart, sampleinfolen, sampledatast
     
     si['bitsperchannel'] = 16
     
+    
+    print("%#x" % sb_file.tell(), sample_ref)
+    
     sb_file.seek(sampledatastart + si['address'])
+    
+    print("%#x" % sb_file.tell(), si)
     
     si['data']             = sb_file.read(si['realsize'])
 
-    sb_file.seek(orig_offset); # print(si)
+    sb_file.seek(orig_offset);
     return si
 
 global_sfx = []
@@ -85,6 +90,9 @@ for file_path in Path(sfx_folder).glob('HC*.SFX'):
         
         sampledatastart        = struct.unpack('<I', f.read(4))[0]
         sampledatalen          = struct.unpack('<I', f.read(4))[0]
+        
+        f.seek(sampleinfostart)
+        samplecount            = struct.unpack('<I', f.read(4))[0]        
         
         print(' ', sfxstart, sfxlen, sampleinfostart, sampleinfolen, specialsampleinfostart, specialsampleinfolen, sampledatastart, sampledatalen)
         
@@ -187,6 +195,11 @@ for file_path in Path(sfx_folder).glob('HC*.SFX'):
                 
                 # swy: ignore streamed (negative indexed) sounds for now
                 if s['fileRef'] < 0:
+                    continue
+                    
+                    
+                if s['fileRef'] >= samplecount:
+                    print(" [!] fileRef %u out of bounds (max is %u) at offset %#x; ignoring." % (s['fileRef'], samplecount - 1, f.tell()))
                     continue
                     
                 si = get_sample(f, s['fileRef'], sampleinfostart, sampleinfolen, sampledatastart, sampledatalen)
