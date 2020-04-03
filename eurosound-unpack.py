@@ -45,9 +45,25 @@ for file_path in Path(sfx_folder).glob('HC*.SFX'):
         hashc = struct.unpack('<I', f.read(4))
         offst = struct.unpack('<I', f.read(4))
         fulls = struct.unpack('<I', f.read(4))
+        
         assert(magic != b'MUSX'), "unexpected header magic value, not MUSX."
-            
+        
         print(str(magic), hashc, offst, fulls)#, "%X" % magic)
+        
+        sfxstart               = struct.unpack('<I', f.read(4))
+        sfxlen                 = struct.unpack('<I', f.read(4))
+        
+        sampleinfostart        = struct.unpack('<I', f.read(4))
+        sampleinfolen          = struct.unpack('<I', f.read(4))
+        
+        specialsampleinfostart = struct.unpack('<I', f.read(4))
+        specialsampleinfolen   = struct.unpack('<I', f.read(4))
+        
+        sampledatastart        = struct.unpack('<I', f.read(4))
+        sampledatalen          = struct.unpack('<I', f.read(4))
+        
+        
+        print(sfxstart, sfxlen, sampleinfostart, sampleinfolen, specialsampleinfostart, specialsampleinfolen, sampledatastart, sampledatalen)#, "%X" % magic)
 
     with open(ht[hash] + '.yml', 'w') as outfile:
         yaml.dump(data, outfile, default_flow_style=False)
