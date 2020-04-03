@@ -86,6 +86,10 @@ for file_path in Path(sfx_folder).glob('HC*.SFX'):
             print('  ', hashcode, hc_str, offset)
             
             sfx.append(hc_str)
+            
+            
+            
 
     with open(ht[hash] + '.yml', 'w') as outfile:
+        outfile.write('# swy: EngineX sound bank exported from %s / %#x\n' % (ht[hash], 0x1c000000 | hash))
         yaml.dump(sfx, outfile, default_flow_style=False)
