@@ -46,7 +46,7 @@ def get_sample(sb_file, sample_ref, sampleinfostart, sampleinfolen, sampledatast
     
     sb_file.seek(sampledatastart + si['address'])
     
-    si['data']             = sb_file.read(si['realsize'])
+    #si['data']             = sb_file.read(si['realsize'])
 
     sb_file.seek(orig_offset); print(si)
     return si
@@ -183,12 +183,12 @@ for file_path in Path(sfx_folder).glob('HC*.SFX'):
                 
                 d['samples'][j] = s
                 
-                sample = get_sample(f, s['fileRef'], sampleinfostart, sampleinfolen, sampledatastart, sampledatalen)
-                
                 # swy: ignore streamed (negative indexed) sounds for now
                 if s['fileRef'] < 0:
                     continue
                     
+                sample = get_sample(f, s['fileRef'], sampleinfostart, sampleinfolen, sampledatastart, sampledatalen)
+
                 with open(hc_str + '/' + chr(ord('a') + j) + '.wav', 'wb') as wavfile:
                     wavfile.write(b'RIFF')               # chunk_id
                     wavfile.write(struct.pack('<I', 50)) # chunk_size
