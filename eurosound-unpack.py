@@ -36,6 +36,7 @@ with open(sfx_folder + '/HC00FFFF.SFX', 'rb') as f:
     fulls = struct.unpack('<I', f.read(4))[0]
     
     assert(magic == b'MUSX'), "unexpected header magic value, not MUSX."
+    assert(hashc == 0xFFFF),  "unexpected header hashcode, not 0xFFFF."
     
     print(' ', str(magic), hashc, offst, fulls)#, "%X" % magic)
     
@@ -55,6 +56,8 @@ with open(sfx_folder + '/HC00FFFF.SFX', 'rb') as f:
         markeroffset = struct.unpack('<I', f.read(4))[0]
         
         f.seek(file_start2 + 1)
+        
+        print(i)
         
         
 quit()
