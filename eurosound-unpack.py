@@ -24,7 +24,40 @@ with open(sfx_hashcd, 'r') as outfile:
             # print(line)
             ht[int(line[2], 16)] = (line[1])
 
-# print(ht)
+print('[+] loading stream file')
+
+
+streams = {}
+
+with open(sfx_folder + '/HC00FFFF.SFX', 'rb') as f:
+    magic = struct.unpack('4s', f.read(4))[0]
+    hashc = struct.unpack('<I', f.read(4))[0]
+    offst = struct.unpack('<I', f.read(4))[0]
+    fulls = struct.unpack('<I', f.read(4))[0]
+    
+    assert(magic == b'MUSX'), "unexpected header magic value, not MUSX."
+    
+    print(' ', str(magic), hashc, offst, fulls)#, "%X" % magic)
+    
+    file_start1 = struct.unpack('<I', f.read(4))[0]
+    filelength1 = struct.unpack('<I', f.read(4))[0]
+    
+    file_start2 = struct.unpack('<I', f.read(4))[0]
+    filelength2 = struct.unpack('<I', f.read(4))[0]
+    
+    file_start3 = struct.unpack('<I', f.read(4))[0]
+    filelength3 = struct.unpack('<I', f.read(4))[0]
+    
+    
+    f.seek(file_start1)
+    
+    for i in range(0, int(filelength1 / 4)):
+        markeroffset = struct.unpack('<I', f.read(4))[0]
+        
+        f.seek(file_start2 + 1)
+        
+        
+quit()
 
 def get_sample(sb_file, sample_ref, sampleinfostart, sampleinfolen, sampledatastart, sampledatalen):
     orig_offset = sb_file.tell()
