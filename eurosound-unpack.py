@@ -92,7 +92,7 @@ with open(sfx_folder + '/HC00FFFF.SFX', 'rb') as f:
             state_b       = struct.unpack('<I', f.read(4))[0]
             
             
-            print('    startmarkercount:', j, startmarkercount)
+            print('    startmarkercount:', j, startmarkercount, '|', markerpos, isinstant, instantbuffer)
         
         
         
