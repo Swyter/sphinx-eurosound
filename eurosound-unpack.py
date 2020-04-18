@@ -57,7 +57,7 @@ with open(sfx_folder + '/HC00FFFF.SFX', 'rb') as f:
         print("--", file_start1, i,file_start1 + i)
         markeroffset = struct.unpack('<I', f.read(4))[0]  # StreamLookupFileDetails
         
-        print("markeroffset: %x" % markeroffset, f.tell(), file_start2, markeroffset, file_start2 + markeroffset)
+        print("  markeroffset: %x" % markeroffset, f.tell(), file_start2, markeroffset, file_start2 + markeroffset)
         
         f.seek(file_start2 + markeroffset)
         
@@ -65,13 +65,36 @@ with open(sfx_folder + '/HC00FFFF.SFX', 'rb') as f:
         audio_offset = struct.unpack('<I', f.read(4))[0]
         audio_size   = struct.unpack('<I', f.read(4))[0]
         
-        print(i, markersize, audio_offset, audio_size)
+        print(" ", i, markersize, audio_offset, audio_size)
         
-        startmarkercount  = struct.unpack('<I', f.read(4))[0] # MusicMarkerStartData
+        startmarkercount  = struct.unpack('<I', f.read(4))[0] # MusicMarkerHeaderData
         markercount       = struct.unpack('<I', f.read(4))[0]
         startmarkeroffset = struct.unpack('<I', f.read(4))[0]
         markeroffset      = struct.unpack('<I', f.read(4))[0]
         basevolume        = struct.unpack('<I', f.read(4))[0]
+        
+        
+        for j in range(0, startmarkercount):
+        
+            name            = struct.unpack('<I', f.read(4))[0] # swy: embedded MusicMarkerData; don't ask me why this is stored twice afterwards; linear array seeking, probably
+            pos             = struct.unpack('<I', f.read(4))[0]
+            mtype           = struct.unpack('<I', f.read(4))[0]
+            flags           = struct.unpack('<I', f.read(4))[0]
+            extra           = struct.unpack('<I', f.read(4))[0]
+            loopstart       = struct.unpack('<I', f.read(4))[0]
+            markercount     = struct.unpack('<I', f.read(4))[0]
+            loopmarkercount = struct.unpack('<I', f.read(4))[0]
+        
+            markerpos     = struct.unpack('<I', f.read(4))[0] # MusicMarkerStartData
+            isinstant     = struct.unpack('<I', f.read(4))[0]
+            instantbuffer = struct.unpack('<I', f.read(4))[0]
+            state_a       = struct.unpack('<I', f.read(4))[0]
+            state_b       = struct.unpack('<I', f.read(4))[0]
+            
+            
+            print('    startmarkercount:', j, startmarkercount)
+        
+        
         
         print(startmarkercount, markercount, startmarkeroffset, markeroffset, basevolume)
 quit()
