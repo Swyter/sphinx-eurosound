@@ -55,19 +55,25 @@ with open(sfx_folder + '/HC00FFFF.SFX', 'rb') as f:
         f.seek(file_start1 + (i * 4))
         
         print("--", file_start1, i,file_start1 + i)
-        markeroffset = struct.unpack('<I', f.read(4))[0]
+        markeroffset = struct.unpack('<I', f.read(4))[0]  # StreamLookupFileDetails
         
         print("markeroffset: %x" % markeroffset, f.tell(), file_start2, markeroffset, file_start2 + markeroffset)
         
         f.seek(file_start2 + markeroffset)
         
-        markersize   = struct.unpack('<I', f.read(4))[0]
+        markersize   = struct.unpack('<I', f.read(4))[0]  # StreamLookupFileDetails2
         audio_offset = struct.unpack('<I', f.read(4))[0]
         audio_size   = struct.unpack('<I', f.read(4))[0]
         
-        # print(i)
+        print(i, markersize, audio_offset, audio_size)
         
+        startmarkercount  = struct.unpack('<I', f.read(4))[0] # MusicMarkerStartData
+        markercount       = struct.unpack('<I', f.read(4))[0]
+        startmarkeroffset = struct.unpack('<I', f.read(4))[0]
+        markeroffset      = struct.unpack('<I', f.read(4))[0]
+        basevolume        = struct.unpack('<I', f.read(4))[0]
         
+        print(startmarkercount, markercount, startmarkeroffset, markeroffset, basevolume)
 quit()
 
 def get_sample(sb_file, sample_ref, sampleinfostart, sampleinfolen, sampledatastart, sampledatalen):
