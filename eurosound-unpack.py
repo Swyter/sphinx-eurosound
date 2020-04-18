@@ -49,15 +49,23 @@ with open(sfx_folder + '/HC00FFFF.SFX', 'rb') as f:
     file_start3 = struct.unpack('<I', f.read(4))[0]
     filelength3 = struct.unpack('<I', f.read(4))[0]
     
+    print(file_start1, filelength1, file_start2, filelength2, file_start3, filelength3)
     
-    f.seek(file_start1)
-    
-    for i in range(0, int(filelength1 / 4)):
+    for i in range(0, int(filelength1 / 4)): # swy: size of one uint per element, actual counts are for scrubs
+        f.seek(file_start1 + (i * 4))
+        
+        print("--", file_start1, i,file_start1 + i)
         markeroffset = struct.unpack('<I', f.read(4))[0]
         
-        f.seek(file_start2 + 1)
+        print("markeroffset: %x" % markeroffset, f.tell(), file_start2, markeroffset, file_start2 + markeroffset)
         
-        print(i)
+        f.seek(file_start2 + markeroffset)
+        
+        markersize   = struct.unpack('<I', f.read(4))[0]
+        audio_offset = struct.unpack('<I', f.read(4))[0]
+        audio_size   = struct.unpack('<I', f.read(4))[0]
+        
+        # print(i)
         
         
 quit()
