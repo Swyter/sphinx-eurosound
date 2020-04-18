@@ -76,6 +76,16 @@ with open(sfx_folder + '/HC00FFFF.SFX', 'rb') as f:
         
         for j in range(0, startmarkercount):
         
+            music_marker = {}
+            music_marker[10] = 'MusicMarker_Start'
+            music_marker[ 9] = 'MusicMarker_End'
+            music_marker[ 7] = 'MusicMarker_Goto'
+            music_marker[ 6] = 'MusicMarker_Loop'
+            music_marker[ 5] = 'MusicMarker_Pause'
+            music_marker[ 0] = 'MusicMarker_Jump'
+            
+            print(music_marker[0])
+        
             name            = struct.unpack('<I', f.read(4))[0] # swy: embedded MusicMarkerData; don't ask me why this is stored twice afterwards; linear array seeking, probably
             pos             = struct.unpack('<I', f.read(4))[0]
             mtype           = struct.unpack('<I', f.read(4))[0]
@@ -92,7 +102,7 @@ with open(sfx_folder + '/HC00FFFF.SFX', 'rb') as f:
             state_b       = struct.unpack('<I', f.read(4))[0]
             
             
-            print('    startmarkercount:', j, startmarkercount, '|', markerpos, isinstant, instantbuffer)
+            print('    startmarkercount:', j, startmarkercount, '|', markerpos, name, pos, music_marker[int(mtype)], markercount, loopmarkercount)
         
         
         
