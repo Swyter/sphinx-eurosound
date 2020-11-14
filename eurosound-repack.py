@@ -59,15 +59,17 @@ def GetSoundProps(File):
         Props.append(v)
     for k, v in document['params']['flags'].items():
         Flags.append(v)
-    print(Flags)
-    
-    #Here should go the code to transform flags values into a digit.
-    
-    
+   
+    #Check flags
+    bitfield = 0
+    for i, flag in enumerate(Flags): 
+        if flag is True:
+            bitfield |= (1 << i)
+    Props.append(bitfield)
     print(Props)
     
-
-        
+    return Props
+    
 #Check that we have arguments
 if len(sys.argv) > 0:
     SoundBankFile = Path(sys.argv[1]).stem
@@ -93,6 +95,7 @@ if len(sys.argv) > 0:
     f.write(struct.pack('I', int("0xC9",16)))
     #Write File full size
     f.write(struct.pack('I', int("0xC9",16))) #<-TEMP, wil be changed once the file be written.
+   
     #Write SFX START
     f.write(struct.pack('I', sfxstart))
     
@@ -112,9 +115,9 @@ if len(sys.argv) > 0:
     
     #Write Number of SFX
     SfxCount = len(sfx)
-    
     f.write(struct.pack('I', SfxCount))
-    print ("INFO -- There are %d sound effects"%SfxCount)
+    
+    print ("INFO -- There are %d sound effects" % SfxCount)
     
     #Write sounds
     for i in range(len(sfx)):
@@ -131,4 +134,29 @@ if len(sys.argv) > 0:
         #Get array of sound properties
         SoundProperties = GetSoundProps(File)
         
+        tracking_type = [
+            '2D',
+            'Amb',
+            '3D',
+            '3D_Rnd_Pos',
+            '2D_PL2',
+        ]
+                
+        #Write sound properties
+        f.write(struct.pack('h',SoundProperties[0])) #duckerLength
+        f.write(struct.pack('h',SoundProperties[1])) #minDelay
+        f.write(struct.pack('h',SoundProperties[2])) #maxDelay
+        f.write(struct.pack('h',SoundProperties[3])) #innerRadiusReal
+        f.write(struct.pack('h',SoundProperties[4])) #outerRadiusReal
+        f.write(struct.pack('b',SoundProperties[5])) #reverbSend
+        f.write(struct.pack('b',tracking_type.index(SoundProperties[6]))) #trackingType
+        f.write(struct.pack('b',SoundProperties[7])) #maxVoices
+        f.write(struct.pack('b',SoundProperties[8])) #priority
+        f.write(struct.pack('b',SoundProperties[9])) #ducker
+        f.write(struct.pack('b',SoundProperties[10]))#masterVolume
+        f.write(struct.pack('H',SoundProperties[11]))#Flags
+        
+        #Write number of samples
+        
+        #Foreach sample write properties
     f.close()
