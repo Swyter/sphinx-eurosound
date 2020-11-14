@@ -53,11 +53,20 @@ def GetSoundProps(File):
     
     ReadingFlags = False
     document = yaml.full_load(File)
-    for k, v in document["params"].items():
+    for k, v in document['params'].items():
         if k == "flags":
             break
         Props.append(v)
+    for k, v in document['params']['flags'].items():
+        Flags.append(v)
+    print(Flags)
+    
+    #Here should go the code to transform flags values into a digit.
+    
+    
     print(Props)
+    
+
         
 #Check that we have arguments
 if len(sys.argv) > 0:
