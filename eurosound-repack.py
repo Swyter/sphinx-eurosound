@@ -40,7 +40,25 @@ def GetFileName(Hashcode):
     print("INFO -- The new file name is: %s" % NameWithExtension)
     
     return NameWithExtension
+
+def RemoveSectionHashcode(Hashcode):
+    Replace = "0x00"
+    NewHashcode = Replace+Hashcode[4:]
+     
+    return NewHashcode
     
+def GetSoundProps(File):
+    Props = []
+    Flags = []
+    
+    ReadingFlags = False
+    document = yaml.full_load(File)
+    for k, v in document["params"].items():
+        if k == "flags":
+            break
+        Props.append(v)
+    print(Props)
+        
 #Check that we have arguments
 if len(sys.argv) > 0:
     SoundBankFile = Path(sys.argv[1]).stem
@@ -64,19 +82,44 @@ if len(sys.argv) > 0:
     f.write(struct.pack('I', int(Hashcode,16)))
     #Write Offset
     f.write(struct.pack('I', int("0xC9",16)))
-    #Write CRC32 Check
+    #Write File full size
     f.write(struct.pack('I', int("0xC9",16))) #<-TEMP, wil be changed once the file be written.
     #Write SFX START
     f.write(struct.pack('I', sfxstart))
     
+    #Store Folders to Check
+    sfx = []
+    
+    #Read the sfx names of the list
     SoundsList = open(sys.argv[1], "r")
     for SoundFolder in SoundsList:
         if not SoundFolder.startswith('#'):
             Folder = SoundFolder.split()[1]
+            sfx.append(Folder)
             print("INFO -- Folder to check: %s"%Folder)
-    
     
     #Go to start position
     f.seek(sfxstart)
-    f.write(struct.pack('4s', b"TEST"))
+    
+    #Write Number of SFX
+    SfxCount = len(sfx)
+    
+    f.write(struct.pack('I', SfxCount))
+    print ("INFO -- There are %d sound effects"%SfxCount)
+    
+    #Write sounds
+    for i in range(len(sfx)):
+        HashcodeToWrite = RemoveSectionHashcode(GetHashcodeFromLabel(sfx[i]))
+        print("INFO -- The new hashcode is %s"%HashcodeToWrite)
+        
+        #Hashcode
+        f.write(struct.pack('I', int(HashcodeToWrite,16)))
+        
+        #Open properties file
+        PropertiesFilePath = "./"+sfx[i]+"/effectProperties.yml"
+        File = open(PropertiesFilePath, "r")
+        
+        #Get array of sound properties
+        SoundProperties = GetSoundProps(File)
+        
     f.close()
