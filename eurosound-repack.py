@@ -4,6 +4,9 @@ import struct
 import os
 import collections
 import sys
+import string
+
+import wave
 
 from pathlib import Path
 
@@ -66,14 +69,41 @@ def GetSoundProps(File):
         if flag is True:
             bitfield |= (1 << i)
     Props.append(bitfield)
+    File.close()
+    
     print(Props)
     
     return Props
+
+def GetNumberOfSamples(File):
+    document = yaml.full_load(File)
+    NumOfSamples = len(document.get('samples'))
+    File.close()
+        
+    print("INFO -- There are %d samples." % NumOfSamples)    
+    
+    return NumOfSamples
+
+def GetSampleProps(File, Index):
+    Props = []
+    
+    document = yaml.full_load(File)
+    for k, v in document['samples'][Index].items():
+        Props.append(v)
+    File.close()
+    
+    print(Props)
+    
+    return Props        
     
 #Check that we have arguments
 if len(sys.argv) > 0:
     SoundBankFile = Path(sys.argv[1]).stem
     print("INFO -- SoundBank File: " + SoundBankFile)
+    
+    #Create a string of all lowercase letters
+    alphabet_string = string.ascii_lowercase
+    alphabet_list = list(alphabet_string)
     
     #Make a dictionary with the defined hashcodes.
     ReadHashcodesFile(sfx_hashcd)
@@ -129,10 +159,9 @@ if len(sys.argv) > 0:
         
         #Open properties file
         PropertiesFilePath = "./"+sfx[i]+"/effectProperties.yml"
-        File = open(PropertiesFilePath, "r")
         
         #Get array of sound properties
-        SoundProperties = GetSoundProps(File)
+        SoundProperties = GetSoundProps(open(PropertiesFilePath, "r"))
         
         tracking_type = [
             '2D',
@@ -157,6 +186,34 @@ if len(sys.argv) > 0:
         f.write(struct.pack('H',SoundProperties[11]))#Flags
         
         #Write number of samples
+        NumberOfSamples = GetNumberOfSamples(open(PropertiesFilePath, "r")) 
+        f.write(struct.pack('h',NumberOfSamples))
         
         #Foreach sample write properties
+        for j in range(0, NumberOfSamples):
+            SamplePropertie = GetSampleProps(open(PropertiesFilePath, "r"),j)
+            
+            f.write(struct.pack('h',SamplePropertie[0])) #fileRef
+            f.write(struct.pack('h',SamplePropertie[1])) #pitchOffset
+            f.write(struct.pack('h',SamplePropertie[2])) #randomPitchOffset
+            f.write(struct.pack('b',SamplePropertie[3])) #baseVolume
+            f.write(struct.pack('b',SamplePropertie[4])) #randomVolumeOffset
+            f.write(struct.pack('b',SamplePropertie[5])) #pan
+            f.write(struct.pack('b',SamplePropertie[6])) #randomPan
+            
+            # swy: ignore streamed (negative indexed) sounds for now
+            if SamplePropertie[0] < 0:
+                continue
+            
+            #Get wav file path
+            WavFile = "./"+sfx[i]+"/"+alphabet_list[j]+".wav"
+            
+            #Write wav
+            AudioFile = wave.open(WavFile, "rb")
+            binary_data = AudioFile.readframes(AudioFile.getnframes())
+            
+            f.write(binary_data)
+            
+            AudioFile.close()
+            
     f.close()
