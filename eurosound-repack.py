@@ -208,12 +208,17 @@ if len(sys.argv) > 0:
             #Get wav file path
             WavFile = "./"+sfx[i]+"/"+alphabet_list[j]+".wav"
             
-            #Write wav
-            AudioFile = wave.open(WavFile, "rb")
-            binary_data = AudioFile.readframes(AudioFile.getnframes())
-            
-            f.write(binary_data)
-            
-            AudioFile.close()
+            if os.path.isfile(WavFile):
+                #Write wav
+                AudioFile = wave.open(WavFile, "rb")
+                binary_data = AudioFile.readframes(AudioFile.getnframes())
+
+                f.write(struct.pack('I',AudioFile.getnchannels()))
+                f.write(struct.pack('I',AudioFile.getframerate()))
+                
+                for v in binary_data:
+                    f.write(struct.pack('h',v))
+                
+                AudioFile.close()
             
     f.close()
