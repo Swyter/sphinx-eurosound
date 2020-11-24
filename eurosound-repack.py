@@ -95,6 +95,35 @@ def GetSampleProps(File, Index):
     print(Props)
     
     return Props        
+ 
+def GetSampleInfoArray(File):
+    Props = []
+    Flags = []
+    
+    ReadingFlags = False
+    document = yaml.full_load(File)
+    for k, v in document['params'].items():
+        if k == "flags":
+            break
+        Props.append(v)
+    for k, v in document['params']['flags'].items():
+        Flags.append(v)
+   
+    #Check flags
+    bitfield = 0
+    for i, flag in enumerate(Flags): 
+        if flag is True:
+            bitfield |= (1 << i)
+    Props.append(bitfield)
+
+    #GetSample Info
+    Props.append(len(document.get('samples')))
+    
+    for k, v in document['samples'].items():
+        Props.append(v)
+    File.close()    
+           
+    return Props
     
 #Check that we have arguments
 if len(sys.argv) > 0:
@@ -129,7 +158,10 @@ if len(sys.argv) > 0:
     #Write SFX START
     f.write(struct.pack('I', sfxstart))
     
-    #Store Folders to Check
+    #Write SFX LEN
+    
+    #Write SampleInfoStart
+    f.write(struct.pack('I', int(0000)))
     sfx = []
     
     #Read the sfx names of the list
@@ -139,6 +171,16 @@ if len(sys.argv) > 0:
             Folder = SoundFolder.split()[1]
             sfx.append(Folder)
             print("INFO -- Folder to check: %s"%Folder)
+            
+    SampleData = []
+    for i in range(len(sfx)):
+        #Open properties file
+        PropertiesFilePath = "./"+sfx[i]+"/effectProperties.yml"
+        TemporalArray = GetSampleInfoArray(open(PropertiesFilePath, "r"))
+        SampleData += TemporalArray
+     
+    #Write SampleInfoLen 
+    f.write(struct.pack('I', len(SampleData)))
     
     #Go to start position
     f.seek(sfxstart)
@@ -199,26 +241,5 @@ if len(sys.argv) > 0:
             f.write(struct.pack('b',SamplePropertie[3])) #baseVolume
             f.write(struct.pack('b',SamplePropertie[4])) #randomVolumeOffset
             f.write(struct.pack('b',SamplePropertie[5])) #pan
-            f.write(struct.pack('b',SamplePropertie[6])) #randomPan
-            
-            # swy: ignore streamed (negative indexed) sounds for now
-            if SamplePropertie[0] < 0:
-                continue
-            
-            #Get wav file path
-            WavFile = "./"+sfx[i]+"/"+alphabet_list[j]+".wav"
-            
-            if os.path.isfile(WavFile):
-                #Write wav
-                AudioFile = wave.open(WavFile, "rb")
-                binary_data = AudioFile.readframes(AudioFile.getnframes())
-
-                f.write(struct.pack('I',AudioFile.getnchannels()))
-                f.write(struct.pack('I',AudioFile.getframerate()))
-                
-                for v in binary_data:
-                    f.write(struct.pack('h',v))
-                
-                AudioFile.close()
-            
+            f.write(struct.pack('b',SamplePropertie[6])) #randomPan                       
     f.close()
