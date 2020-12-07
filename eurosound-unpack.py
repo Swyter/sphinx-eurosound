@@ -107,7 +107,7 @@ with open(sfx_folder + '/HC00FFFF.SFX', 'rb') as f:
         
         
         print(startmarkercount, markercount, startmarkeroffset, markeroffset, basevolume)
-quit()
+#quit()
 
 def get_sample(sb_file, sample_ref, sampleinfostart, sampleinfolen, sampledatastart, sampledatalen):
     orig_offset = sb_file.tell()
@@ -148,8 +148,8 @@ for file_path in Path(sfx_folder).glob('HC*.SFX'):
     hash = str(file_path).split('HC')[1].split('.')[0]
     hash = int(hash, 16)
     
-    if (not str(file_path).endswith('HC00000A.SFX')):
-        continue
+    #if (not str(file_path).endswith('HC00000A.SFX')):
+    #    continue
     
     print(file_path, hash, ht[hash])
     with open(file_path, 'rb') as f:
@@ -286,7 +286,15 @@ for file_path in Path(sfx_folder).glob('HC*.SFX'):
                     continue
                     
                 si = get_sample(f, s['fileRef'], sampleinfostart, sampleinfolen, sampledatastart, sampledatalen)
-
+                
+                wavfileInfo = open(hc_str + '/' + chr(ord('a') + j) + '.txt', 'w')
+                wavfileInfo.write('#ftype:3\n')
+                wavfileInfo.write('# jmarti856: EngineX sound effect audio data\n')
+                wavfileInfo.write('%s\n' % str(si['flags']))
+                wavfileInfo.write('%s\n' % str(si['psi_sampleheader']))
+                wavfileInfo.write('%s\n' % str(si['loopoffset']))
+                wavfileInfo.close()
+                    
                 with open(hc_str + '/' + chr(ord('a') + j) + '.wav', 'wb') as wavfile:
                     wavfile.write(b'RIFF')               # chunk_id
                     wavfile.write(struct.pack('<I', ((44 - 8) + si['realsize']) )) # chunk_size
@@ -305,8 +313,8 @@ for file_path in Path(sfx_folder).glob('HC*.SFX'):
                     wavfile.write(struct.pack('<I', si['realsize']))  # subchunk_size
                     
                     wavfile.write(si['data'])
-                
             with open(hc_str + '/effectProperties.yml', 'w') as outfile:
+                outfile.write('#ftype:2\n')
                 outfile.write('# swy: EngineX sound effect exported from %s / %#x\n' % (hc_str, 0x1A000000 | hashcode))
                 yaml.dump(d, outfile, default_flow_style=False, sort_keys=False)
                 
@@ -314,5 +322,6 @@ for file_path in Path(sfx_folder).glob('HC*.SFX'):
                 
 
     with open(ht[hash] + '.yml', 'w') as outfile:
+        outfile.write('#ftype:1\n')
         outfile.write('# swy: EngineX sound bank exported from %s / %#x\n' % (ht[hash], 0x1c000000 | hash))
         yaml.dump(sfx, outfile, default_flow_style=False, sort_keys=False)
