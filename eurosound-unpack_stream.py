@@ -52,12 +52,11 @@ with open('HC00FFFF.SFX', 'rb') as f:
         #write file with data
         r = open("Unpacked/"+str(audio_offset)+".ima", "wb+")
         
-        data = f.read(audio_size)
-        
-        r.write(data)
-        r.close();
-        
-        os.system('sox -t ima -e ima-adpcm -c 1 -r 32000 ' + "Unpacked/"+str(audio_offset)+".ima"  + ' -b 16 '+ "Unpacked/"+str(audio_offset)+".wav")
+        Data = f.read(audio_size)              
+        r.write(Data)
+        r.close()
+
+        os.system('sox -t ima -e ima-adpcm -c 1 -r 22050 ' + 'Unpacked/'+str(audio_offset)+'.ima'  + ' -b 16 '+ 'Unpacked/'+str(audio_offset)+'.wav')
         
         #remove temporal .ima file
         os.remove("Unpacked/"+str(audio_offset)+".ima") 
