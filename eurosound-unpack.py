@@ -255,8 +255,8 @@ for file_path in Path(sfx_folder).glob('HC*.SFX'):
             d['params']['flags']['treatLikeMusic']     = bool((flags >> 12) & 1)
             
             
-            if not os.path.exists(hc_str):
-                os.mkdir(hc_str)
+            if not os.path.exists('SFX/' + hc_str):
+                os.mkdir('SFX/' + hc_str)
             
             sample_count    = struct.unpack('<h', f.read(2))[0]
             d['samples'] = {}
@@ -287,7 +287,7 @@ for file_path in Path(sfx_folder).glob('HC*.SFX'):
                     
                 si = get_sample(f, s['fileRef'], sampleinfostart, sampleinfolen, sampledatastart, sampledatalen)
 
-                with open(hc_str + '/' + chr(ord('a') + j) + '.wav', 'wb') as wavfile:
+                with open('SFX/' + hc_str + '/' + chr(ord('a') + j) + '.wav', 'wb') as wavfile:
                     wavfile.write(b'RIFF')               # chunk_id
                     wavfile.write(struct.pack('<I', ((44 - 8) + si['realsize']) )) # chunk_size
                     wavfile.write(b'WAVE')               # format
@@ -306,13 +306,17 @@ for file_path in Path(sfx_folder).glob('HC*.SFX'):
                     
                     wavfile.write(si['data'])
                 
-            with open(hc_str + '/effectProperties.yml', 'w') as outfile:
+            with open('SFX/' + hc_str + '/effectProperties.yml', 'w') as outfile:
                 outfile.write('# swy: EngineX sound effect exported from %s / %#x\n' % (hc_str, 0x1A000000 | hashcode))
                 yaml.dump(d, outfile, default_flow_style=False, sort_keys=False)
-                
-                
-                
+        #
 
-    with open(ht[hash] + '.yml', 'w') as outfile:
-        outfile.write('# swy: EngineX sound bank exported from %s / %#x\n' % (ht[hash], 0x1c000000 | hash))
-        yaml.dump(sfx, outfile, default_flow_style=False, sort_keys=False)
+        continue
+
+        if not os.path.exists('SB/'):
+            os.mkdir('SB/')
+        #
+        with open('SB/' + ht[hash] + '.yml', 'w') as outfile:
+            outfile.write('# swy: EngineX sound bank exported from %s / %#x\n' % (ht[hash], 0x1c000000 | hash))
+            yaml.dump(sfx, outfile, default_flow_style=False, sort_keys=False)
+
