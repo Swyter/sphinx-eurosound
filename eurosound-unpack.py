@@ -83,8 +83,6 @@ with open(sfx_folder + '/HC00FFFF.SFX', 'rb') as f:
             music_marker[ 6] = 'MusicMarker_Loop'
             music_marker[ 5] = 'MusicMarker_Pause'
             music_marker[ 0] = 'MusicMarker_Jump'
-            
-            print(music_marker[0])
         
             name            = struct.unpack('<I', f.read(4))[0] # swy: embedded MusicMarkerData; don't ask me why this is stored twice afterwards; linear array seeking, probably
             pos             = struct.unpack('<I', f.read(4))[0]
@@ -107,7 +105,7 @@ with open(sfx_folder + '/HC00FFFF.SFX', 'rb') as f:
         
         
         print(startmarkercount, markercount, startmarkeroffset, markeroffset, basevolume)
-quit()
+#quit()
 
 def get_sample(sb_file, sample_ref, sampleinfostart, sampleinfolen, sampledatastart, sampledatalen):
     orig_offset = sb_file.tell()
@@ -142,14 +140,15 @@ def get_sample(sb_file, sample_ref, sampleinfostart, sampleinfolen, sampledatast
     return si
 
 global_sfx = []
+sb = {}
 
 # swy: iterate over all the soundbank files, make them human readable and unpack them
 for file_path in Path(sfx_folder).glob('HC*.SFX'):
     hash = str(file_path).split('HC')[1].split('.')[0]
     hash = int(hash, 16)
     
-    if (not str(file_path).endswith('HC00000A.SFX')):
-        continue
+    #if (not str(file_path).endswith('HC00000A.SFX')):
+    #    continue
     
     print(file_path, hash, ht[hash])
     with open(file_path, 'rb') as f:
@@ -181,6 +180,7 @@ for file_path in Path(sfx_folder).glob('HC*.SFX'):
         
         f.seek(sfxstart)
         
+        sb[hashc] = []
         sfx = []
         
         sfxcount = struct.unpack('<I', f.read(4))[0]
@@ -204,6 +204,9 @@ for file_path in Path(sfx_folder).glob('HC*.SFX'):
             print('  ', hashcode, hc_str, offset)
             
             sfx.append(hc_str)
+            sb[hashc].append(hashcode)
+
+            continue
             
             # swy: skip sound effects that we have already dumped in this session, even if they are from other soundbanks;
             #      ideally they should all be the same, so we save time
@@ -320,3 +323,5 @@ for file_path in Path(sfx_folder).glob('HC*.SFX'):
             outfile.write('# swy: EngineX sound bank exported from %s / %#x\n' % (ht[hash], 0x1c000000 | hash))
             yaml.dump(sfx, outfile, default_flow_style=False, sort_keys=False)
 
+with open('__all.yml', 'w') as outfile:
+    yaml.dump(sb, outfile, default_flow_style=False, sort_keys=False)
