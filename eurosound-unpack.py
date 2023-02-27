@@ -324,4 +324,7 @@ for file_path in Path(sfx_folder).glob('HC*.SFX'):
             yaml.dump(sfx, outfile, default_flow_style=False, sort_keys=False)
 
 with open('__all.yml', 'w') as outfile:
+    # swy: sort the SFX by hashcode, they are usually sorted by hashcode label on export.
+    for elem in sb:
+        sb[elem].sort()
     yaml.dump(sb, outfile, default_flow_style=False, sort_keys=False)
