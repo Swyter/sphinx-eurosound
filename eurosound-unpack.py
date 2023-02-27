@@ -324,7 +324,15 @@ for file_path in Path(sfx_folder).glob('HC*.SFX'):
             yaml.dump(sfx, outfile, default_flow_style=False, sort_keys=False)
 
 with open('__all.yml', 'w') as outfile:
+
+    uniq_sfx = {}
+
     # swy: sort the SFX by hashcode, they are usually sorted by hashcode label on export.
     for elem in sb:
         sb[elem].sort()
+
+        for sfx in sb[elem]:
+            uniq_sfx[sfx] = { 'lst_prev': None, 'lst_next': None, 'lst_prev_matches': None, 'lst_next_matches': None }
+
+    uniq_sfx = dict(sorted(uniq_sfx.items()))
     yaml.dump(sb, outfile, default_flow_style=False, sort_keys=False)
