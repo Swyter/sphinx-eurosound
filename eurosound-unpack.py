@@ -144,6 +144,7 @@ sb = {}
 
 # swy: iterate over all the soundbank files, make them human readable and unpack them
 for file_path in Path(sfx_folder).glob('HC*.SFX'):
+    break
     hash = str(file_path).split('HC')[1].split('.')[0]
     hash = int(hash, 16)
     
@@ -323,16 +324,46 @@ for file_path in Path(sfx_folder).glob('HC*.SFX'):
             outfile.write('# swy: EngineX sound bank exported from %s / %#x\n' % (ht[hash], 0x1c000000 | hash))
             yaml.dump(sfx, outfile, default_flow_style=False, sort_keys=False)
 
-with open('__all.yml', 'w') as outfile:
+#with open('__all.yml', 'w') as outfile:
+#    uniq_sfx = {}
+#    # swy: sort the SFX by hashcode, they are usually sorted by hashcode label on export.
+#    for cur_sb in sb:
+#        sb[cur_sb].sort()
+#
+#        for cur_sfx in sb[cur_sb]:
+#            uniq_sfx[cur_sfx] = { 'lst_prev': None, 'lst_next': None, 'lst_prev_matches': None, 'lst_next_matches': None }
+#
+#    uniq_sfx = dict(sorted(uniq_sfx.items()))
+#    yaml.dump(sb, outfile, default_flow_style=False, sort_keys=False)
 
+
+with open('__all.yml', 'r') as infile:
+    sb = yaml.safe_load(infile)
     uniq_sfx = {}
-
     # swy: sort the SFX by hashcode, they are usually sorted by hashcode label on export.
-    for elem in sb:
-        sb[elem].sort()
+    for cur_sb in sb:
+        sb[cur_sb].sort()
 
-        for sfx in sb[elem]:
-            uniq_sfx[sfx] = { 'lst_prev': None, 'lst_next': None, 'lst_prev_matches': None, 'lst_next_matches': None }
+        for cur_sfx in sb[cur_sb]:
+            uniq_sfx[cur_sfx] = { 'lst_prev': None, 'lst_next': None, 'lst_prev_matches': None, 'lst_next_matches': None }
 
-    uniq_sfx = dict(sorted(uniq_sfx.items()))
-    yaml.dump(sb, outfile, default_flow_style=False, sort_keys=False)
+    for cur_sb in sb:
+        cur_sb_last_index = len(sb[cur_sb]) - 1
+        for idx, cur_sfx in enumerate(sb[cur_sb]):
+            prev_sfx = None; next_sfx = None
+            if (idx - 1) > 0:
+                prev_sfx = sb[cur_sb][idx - 1]
+
+            if (idx + 1) <= cur_sb_last_index:
+                next_sfx = sb[cur_sb][idx + 1]
+
+            if prev_sfx:
+                uniq_sfx[cur_sfx]['lst_prev_matches'] = uniq_sfx[cur_sfx]['lst_prev'] == prev_sfx
+                uniq_sfx[cur_sfx]['lst_prev'] = prev_sfx
+
+            if next_sfx:
+                uniq_sfx[cur_sfx]['lst_next_matches'] = uniq_sfx[cur_sfx]['lst_next'] == next_sfx
+                uniq_sfx[cur_sfx]['lst_next'] = next_sfx
+
+    with open('__uniq.yml', 'w') as outfile:
+        yaml.dump(uniq_sfx, outfile, default_flow_style=False, sort_keys=False)
