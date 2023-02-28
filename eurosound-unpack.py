@@ -401,7 +401,7 @@ with open('__all.yml', 'r') as infile:
     with open('__uniq.yml', 'w') as outfile:
         yaml.dump(uniq_sfx, outfile, default_flow_style=False, sort_keys=False)
 
-
+'''
     with open('__uniq.dot', 'w') as outfile:
         outfile.write("digraph G {\n")
         for cur_sfx in uniq_sfx:
@@ -414,3 +414,12 @@ with open('__all.yml', 'r') as infile:
             #    if uniq_sfx[cur_sfx]['sb'][idx][1]:
             #        outfile.write(f"{cur_sfx} -> {uniq_sfx[cur_sfx]['sb'][idx][1]}[color=blue]\n")
         outfile.write("}\n")
+'''
+
+for cur_sb in sb:
+    print(f"[SOUNDBANK {cur_sb}]")
+    for idx, cur_sfx in enumerate(sb[cur_sb]):
+        print(uniq_sfx[cur_sfx]['hc'])
+
+        if not uniq_sfx[cur_sfx]['lst_next_matches']:
+            print("--")
