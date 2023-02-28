@@ -388,3 +388,12 @@ with open('__all.yml', 'r') as infile:
 
     with open('__uniq.yml', 'w') as outfile:
         yaml.dump(uniq_sfx, outfile, default_flow_style=False, sort_keys=False)
+
+
+    with open('__uniq.dot', 'w') as outfile:
+        for cur_sfx in uniq_sfx:
+            for idx in uniq_sfx[cur_sfx]['sb']:
+                if uniq_sfx[cur_sfx]['sb'][idx][0]:
+                    outfile.write(f"{cur_sfx} -> {uniq_sfx[cur_sfx]['sb'][idx][0]}\n")
+                if uniq_sfx[cur_sfx]['sb'][idx][1]:
+                    outfile.write(f"{cur_sfx} -> {uniq_sfx[cur_sfx]['sb'][idx][1]}\n")
