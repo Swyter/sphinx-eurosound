@@ -392,8 +392,9 @@ with open('__all.yml', 'r') as infile:
 
     with open('__uniq.dot', 'w') as outfile:
         for cur_sfx in uniq_sfx:
+            outfile.write(f"{cur_sfx} [label=\"{uniq_sfx[cur_sfx]['hc']}\"]\n")
             for idx in uniq_sfx[cur_sfx]['sb']:
                 if uniq_sfx[cur_sfx]['sb'][idx][0]:
-                    outfile.write(f"{cur_sfx} -> {uniq_sfx[cur_sfx]['sb'][idx][0]}\n")
+                    outfile.write(f"{cur_sfx} -> {uniq_sfx[cur_sfx]['sb'][idx][0]}[color=red]\n")
                 if uniq_sfx[cur_sfx]['sb'][idx][1]:
-                    outfile.write(f"{cur_sfx} -> {uniq_sfx[cur_sfx]['sb'][idx][1]}\n")
+                    outfile.write(f"{cur_sfx} -> {uniq_sfx[cur_sfx]['sb'][idx][1]}[color=blue]\n")
