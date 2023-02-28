@@ -416,9 +416,19 @@ with open('__all.yml', 'r') as infile:
         outfile.write("}\n")
 '''
 
+dbs = {}; cur_db = []
+
 with open('__groups.txt', 'w') as outfile:
     for cur_sb in sb:
         outfile.write(f"[SOUNDBANK {cur_sb} - {ht[cur_sb]}]\n")
+
+        def write_db():
+            global cur_db; global dbs
+            if len(cur_db) <= 0:
+                return
+            cur_db_sorted = cur_db; cur_db_sorted.sort()
+            dbs["-".join(cur_db_sorted)] = cur_db
+            cur_db = []
 
         for idx, cur_sfx in enumerate(sb[cur_sb]):
 
@@ -427,9 +437,17 @@ with open('__groups.txt', 'w') as outfile:
             if not uniq_sfx[cur_sfx]['counter'] == 1:
                 if not uniq_sfx[cur_sfx]['lst_prev_matches']:
                     outfile.write("^^\n")
+                    write_db()
 
             outfile.write(uniq_sfx[cur_sfx]['hc'] + '\n')
+
+            cur_db.append(uniq_sfx[cur_sfx]['hc'])
 
             if not uniq_sfx[cur_sfx]['counter'] == 1:
                 if not uniq_sfx[cur_sfx]['lst_next_matches']:
                     outfile.write("vv\n")
+                    write_db()
+
+with open('__databases.txt', 'w') as outfile:
+    for db in dbs:
+        outfile.write(db + "\n")
