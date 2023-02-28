@@ -416,10 +416,11 @@ with open('__all.yml', 'r') as infile:
         outfile.write("}\n")
 '''
 
-for cur_sb in sb:
-    print(f"[SOUNDBANK {cur_sb}]")
-    for idx, cur_sfx in enumerate(sb[cur_sb]):
-        print(uniq_sfx[cur_sfx]['hc'])
+with open('__groups.txt', 'w') as outfile:
+    for cur_sb in sb:
+        outfile.write(f"[SOUNDBANK {cur_sb}]\n")
+        for idx, cur_sfx in enumerate(sb[cur_sb]):
+            outfile.write(uniq_sfx[cur_sfx]['hc'] + '\n')
 
-        if not uniq_sfx[cur_sfx]['lst_next_matches']:
-            print("--")
+            if not uniq_sfx[cur_sfx]['lst_next_matches']:
+                outfile.write("--\n")
