@@ -345,7 +345,7 @@ with open('__all.yml', 'r') as infile:
         sb[cur_sb].sort()
 
         for cur_sfx in sb[cur_sb]:
-            uniq_sfx[cur_sfx] = { 'lst_prev': None, 'lst_next': None, 'lst_prev_matches': None, 'lst_next_matches': None }
+            uniq_sfx[cur_sfx] = { 'lst_prev': None, 'lst_next': None, 'lst_prev_matches': None, 'lst_next_matches': None, 'counter': 0, 'sb': {} }
 
     for cur_sb in sb:
         cur_sb_last_index = len(sb[cur_sb]) - 1
@@ -357,6 +357,8 @@ with open('__all.yml', 'r') as infile:
             if (idx + 1) <= cur_sb_last_index:
                 next_sfx = sb[cur_sb][idx + 1]
 
+            uniq_sfx[cur_sfx]['sb'][cur_sb] = [prev_sfx, next_sfx]
+
             if prev_sfx:
                 uniq_sfx[cur_sfx]['lst_prev_matches'] = uniq_sfx[cur_sfx]['lst_prev'] == prev_sfx
                 uniq_sfx[cur_sfx]['lst_prev'] = prev_sfx
@@ -364,6 +366,18 @@ with open('__all.yml', 'r') as infile:
             if next_sfx:
                 uniq_sfx[cur_sfx]['lst_next_matches'] = uniq_sfx[cur_sfx]['lst_next'] == next_sfx
                 uniq_sfx[cur_sfx]['lst_next'] = next_sfx
+
+            hc_str = 0x1A000000 | cur_sfx
+            
+            if (hc_str in ht):
+                hc_str = ht[hc_str]
+            else:
+                hc_str = "SFX_%#x" % hc_str
+
+            uniq_sfx[cur_sfx]['counter'] += 1
+            uniq_sfx[cur_sfx]['hc'] = hc_str
+
+    uniq_sfx = dict(sorted(uniq_sfx.items()))
 
     with open('__uniq.yml', 'w') as outfile:
         yaml.dump(uniq_sfx, outfile, default_flow_style=False, sort_keys=False)
