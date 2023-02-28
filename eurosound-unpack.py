@@ -422,5 +422,5 @@ with open('__groups.txt', 'w') as outfile:
         for idx, cur_sfx in enumerate(sb[cur_sb]):
             outfile.write(uniq_sfx[cur_sfx]['hc'] + '\n')
 
-            if not uniq_sfx[cur_sfx]['lst_next_matches']:
+            if not uniq_sfx[cur_sfx]['lst_prev_matches'] or not uniq_sfx[cur_sfx]['lst_next_matches']:
                 outfile.write("--\n")
