@@ -418,7 +418,7 @@ with open('__all.yml', 'r') as infile:
 
 with open('__groups.txt', 'w') as outfile:
     for cur_sb in sb:
-        outfile.write(f"[SOUNDBANK {cur_sb}]\n")
+        outfile.write(f"[SOUNDBANK {cur_sb} - {ht[cur_sb]}]\n")
         for idx, cur_sfx in enumerate(sb[cur_sb]):
 
             if not uniq_sfx[cur_sfx]['lst_prev_matches']:
