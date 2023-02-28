@@ -1,3 +1,4 @@
+digraph G {
 1 [label="SFX_A_BLANK"]
 1 -> 9[color=blue]
 2 [label="SFX_A_TEST_LOOP"]
@@ -25703,3 +25704,4 @@
 1965 -> 1926[color=red]
 1966 [label="SFX_SPEC_WATER_JETS_STOP_BIG"]
 1966 -> 1965[color=red]
+}
