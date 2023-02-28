@@ -357,14 +357,21 @@ with open('__all.yml', 'r') as infile:
             if (idx + 1) <= cur_sb_last_index:
                 next_sfx = sb[cur_sb][idx + 1]
 
+            if cur_sfx == 88:
+                i=1
+
             uniq_sfx[cur_sfx]['sb'][cur_sb] = [prev_sfx, next_sfx]
 
             if prev_sfx:
-                uniq_sfx[cur_sfx]['lst_prev_matches'] = uniq_sfx[cur_sfx]['lst_prev'] == prev_sfx
+                test = uniq_sfx[cur_sfx]['lst_prev'] == prev_sfx
+                if uniq_sfx[cur_sfx]['lst_prev'] and uniq_sfx[cur_sfx]['lst_prev_matches'] != False:
+                    uniq_sfx[cur_sfx]['lst_prev_matches'] = test
                 uniq_sfx[cur_sfx]['lst_prev'] = prev_sfx
 
             if next_sfx:
-                uniq_sfx[cur_sfx]['lst_next_matches'] = uniq_sfx[cur_sfx]['lst_next'] == next_sfx
+                test = uniq_sfx[cur_sfx]['lst_next'] == next_sfx
+                if uniq_sfx[cur_sfx]['lst_next'] and uniq_sfx[cur_sfx]['lst_next_matches'] != False:
+                    uniq_sfx[cur_sfx]['lst_next_matches'] = test
                 uniq_sfx[cur_sfx]['lst_next'] = next_sfx
 
             hc_str = 0x1A000000 | cur_sfx
