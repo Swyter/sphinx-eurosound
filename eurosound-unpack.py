@@ -345,7 +345,7 @@ with open('__all.yml', 'r') as infile:
         sb[cur_sb].sort()
 
         for cur_sfx in sb[cur_sb]:
-            uniq_sfx[cur_sfx] = { 'lst_prev': None, 'lst_next': None, 'lst_prev_matches': None, 'lst_next_matches': None, 'counter': 0, 'sb': {} }
+            uniq_sfx[cur_sfx] = { 'lst_prev': None, 'lst_next': None, 'lst_prev_matches': None, 'lst_next_matches': None, 'counter': 0, 'sb': {}, 'hist': {} }
 
     for cur_sb in sb:
         cur_sb_last_index = len(sb[cur_sb]) - 1
@@ -361,6 +361,18 @@ with open('__all.yml', 'r') as infile:
                 i=1
 
             uniq_sfx[cur_sfx]['sb'][cur_sb] = [prev_sfx, next_sfx]
+
+            if prev_sfx:
+                if not prev_sfx in uniq_sfx[cur_sfx]['hist']:
+                    uniq_sfx[cur_sfx]['hist'][prev_sfx] = 0
+
+                uniq_sfx[cur_sfx]['hist'][prev_sfx] += 1
+
+            if next_sfx:
+                if not next_sfx in uniq_sfx[cur_sfx]['hist']:
+                    uniq_sfx[cur_sfx]['hist'][next_sfx] = 0
+
+                uniq_sfx[cur_sfx]['hist'][next_sfx] += 1
 
             if prev_sfx:
                 test = uniq_sfx[cur_sfx]['lst_prev'] == prev_sfx
@@ -394,9 +406,11 @@ with open('__all.yml', 'r') as infile:
         outfile.write("digraph G {\n")
         for cur_sfx in uniq_sfx:
             outfile.write(f"{cur_sfx} [label=\"{uniq_sfx[cur_sfx]['hc']}\"]\n")
-            for idx in uniq_sfx[cur_sfx]['sb']:
-                if uniq_sfx[cur_sfx]['sb'][idx][0]:
-                    outfile.write(f"{cur_sfx} -> {uniq_sfx[cur_sfx]['sb'][idx][0]}[color=red]\n")
-                if uniq_sfx[cur_sfx]['sb'][idx][1]:
-                    outfile.write(f"{cur_sfx} -> {uniq_sfx[cur_sfx]['sb'][idx][1]}[color=blue]\n")
+            for idx in uniq_sfx[cur_sfx]['hist']:
+                outfile.write(f"{cur_sfx} -> {idx}[weight={uniq_sfx[cur_sfx]['hist'][idx]}]\n")
+            #for idx in uniq_sfx[cur_sfx]['sb']:
+            #    if uniq_sfx[cur_sfx]['sb'][idx][0]:
+            #        outfile.write(f"{cur_sfx} -> {uniq_sfx[cur_sfx]['sb'][idx][0]}[color=red]\n")
+            #    if uniq_sfx[cur_sfx]['sb'][idx][1]:
+            #        outfile.write(f"{cur_sfx} -> {uniq_sfx[cur_sfx]['sb'][idx][1]}[color=blue]\n")
         outfile.write("}\n")
